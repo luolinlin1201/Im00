@@ -1,6 +1,6 @@
 ---
 description: "Powerful, pliable pixel perfection."
-layout: "paige/home"
+
 paige:
   home:
     blurb: "Paige is designed to put your content front and center, avoiding the typical clutter. The look is seamless and smooth, scalable and readable, portable and efficient. The layout is minimal and responsive, using verticality and white space to focus and delineate parts of the page. The implementation is flexible and extensible. It's a versatile canvas that serves most web needs."

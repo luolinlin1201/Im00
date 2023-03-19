@@ -2,7 +2,7 @@
 {{ $page := . }}
 
 {{ partial "paige/article.html" $page }}
-
+{{range .Pages}}{{.}}{{end}}
 {{ if or (eq $page.RelPermalink "/categories/") (eq $page.RelPermalink "/tags/") }}
     {{ if $page.Pages }}
         <div id="paige-subpages">

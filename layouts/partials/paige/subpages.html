@@ -1,9 +1,41 @@
 {{ $page := . }}
 
-{{ if $page.Pages }}
+{{ $taxonomies := cond $page.IsHome site.Taxonomies slice }}
+{{ $sections := $page.Sections }}
+{{ $pages := where $page.Pages "Kind" "in" (slice "page" "term") }}
+
+{{ if $taxonomies }}
+    <div id="paige-taxonomies">
+        {{ if or $sections $pages }}
+            <h2 class="h4 text-center" id="paige-taxonomies-header">Collections</h2>
+        {{ end }}
+
+        {{ range $k, $v := site.Taxonomies }}
+            {{ partial "paige/subpage.html" (site.GetPage $k) }}
+        {{ end }}
+    </div>
+{{ end }}
+
+{{ if $sections }}
+    <div id="paige-subsections">
+        {{ if or $taxonomies $pages }}
+            <h2 class="h4 text-center" id="paige-subsections-header">Sections</h2>
+        {{ end }}
+
+        {{ range $page.Sections }}
+            {{ partial "paige/subpage.html" . }}
+        {{ end }}
+    </div>
+{{ end }}
+
+{{ if $pages }}
     {{ if $page.Param "paige.section_pages.full_pages" }}
-        {{ $pager := $page.Paginate $page.Pages }}
+        {{ $pager := $page.Paginate $pages }}
         <div id="paige-subpages">
+            {{ if or $taxonomies $sections }}
+                <h2 class="h4 text-center" id="paige-subpages-header">Pages</h2>
+            {{ end }}
+
             {{ range $pager.Pages }}
                 {{ partial "paige/article.html" (dict "fullpages" true "page" .) }}
             {{ end }}
@@ -18,24 +50,29 @@
         {{ end }}
     {{ else }}
         <div id="paige-subpages">
-            {{ $pinned := where $page.Pages "Params.paige.pin" true }}
+            {{ if or $taxonomies $sections }}
+                <h2 class="h4 text-center" id="paige-subpages-header">Pages</h2>
+            {{ end }}
+
+            {{ $pinned := where $pages "Params.paige.pin" true }}
 
             {{ range $pinned.ByPublishDate.Reverse }}
                 {{ partial "paige/subpage.html" . }}
             {{ end }}
 
-            {{ $unpinned := complement $pinned $page.Pages }}
+            {{ $unpinned := complement $pinned $pages }}
             {{ $pagegroups := $unpinned.ByPublishDate.Reverse.GroupByPublishDate "January 2006" }}
             {{ $pager := $page.Paginate $pagegroups }}
 
             {{ range $pager.PageGroups }}
-                <p class="h5 paige-date-header text-center">{{ .Key }}</p>
+                <h3 class="h5 paige-date-header text-center">{{ .Key }}</h3>
 
                 {{ range .Pages }}
                     {{ partial "paige/subpage.html" . }}
                 {{ end }}
             {{ end }}
         </div>
+
         {{ if or $pager.HasPrev $pager.HasNext }}
             <div id="paige-pagination">
                 <div class="d-flex justify-content-center">
